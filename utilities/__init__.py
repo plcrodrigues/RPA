@@ -1,3 +1,0 @@
-import transferlearning_manopt
-import transferlearning_utils
-import diffusion_map
