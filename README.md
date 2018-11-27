@@ -14,22 +14,24 @@ We have included two notebooks with examples of application of the RPA on data f
 
 ## Installation
 
-**Must by running Python 3.6**
+**Must be running Python 3.6**
 
-To install, fork or clone the repository and go to the downloaded directory, then run
+To install, you can fork or clone the repository and go to the downloaded directory, then run
 
 ```
 pip install -r requirements.txt
 python setup.py develop # because no stable release yet
 ```
 
+This will ensure that whenever you do ```import rpa``` your code will find the scripts (you might prefer to do this on a virtual environment).
+
 **Requirements we use**
 
-pyriemann==0.2.5
-scipy==1.1.0
-autograd==1.2
-setuptools==40.6.2
-numpy==1.14.3
-pymanopt==0.2.3
-matplotlib==2.2.2
-scikit_learn==0.20.1
+- pyriemann==0.2.5
+- scipy==1.1.0
+- autograd==1.2
+- setuptools==40.6.2
+- numpy==1.14.3
+- pymanopt==0.2.3
+- matplotlib==2.2.2
+- scikit_learn==0.20.1
