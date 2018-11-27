@@ -1,5 +1,7 @@
 # Riemannian Procrustes Analysis
 
+(Installation procedure is described below)
+
 ## Description
 
 This repository contains Python code for using the Riemannian Procrustes Analysis method proposed in [1]. This procedure is a Transfer Learning approach for dealing with the statistical variability of EEG signals recorded on different sessions and/or from different subjects. This is a common problem faced by Brain-Computer Interfaces (BCI) and poses a challenge for systems that try to reuse data from previous recordings to avoid a calibration phase for new users.
@@ -14,7 +16,7 @@ We have included two notebooks with examples of application of the RPA on data f
 
 ## Installation
 
-**Must be running Python 3.6**
+**Must be running Python 3**
 
 To install, you can fork or clone the repository and go to the downloaded directory, then run
 
