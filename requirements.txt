@@ -1,0 +1,8 @@
+pyriemann==0.2.5
+scipy==1.1.0
+autograd==1.2
+setuptools==40.6.2
+numpy==1.14.3
+pymanopt==0.2.3
+matplotlib==2.2.2
+scikit_learn==0.20.1
