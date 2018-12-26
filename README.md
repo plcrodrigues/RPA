@@ -10,7 +10,7 @@ RPA is based on the concept of Procrustes analysis [2]. It works by matching the
 
 We have included two notebooks with examples of application of the RPA on data from two BCI paradigms : motor imagery and SSVEP. Both notebooks are self-explanatory and illustrate the improvement in cross-subject classification when RPA is used as a step for matching the statistical distributions of the datasets.
 
-[1] Pedro L. C. Rodrigues, Christian Jutten, and Marco Congedo - "*Riemannian Procrustes Analysis : Transfer Learning for Brain-Computer Interfaces*", submitted to IEEE Transactions on Biomedical Engineering in May 2018. Please send an e-mail to `pedro.rodrigues@gipsa-lab.fr` if you want a copy of the manuscript.
+[1] Pedro L. C. Rodrigues, Christian Jutten, and Marco Congedo - "*Riemannian Procrustes Analysis : Transfer Learning for Brain-Computer Interfaces*", DOI : 10.1109/TBME.2018.2889705 ([link](https://ieeexplore.ieee.org/document/8588384))
 
 [2] J. C. Gower and G. B. Dijksterhuis, "*Procrustes Problems*". Oxford University Press, January 2004
 
