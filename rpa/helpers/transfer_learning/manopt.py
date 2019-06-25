@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
 Created on Mon Dec  4 15:25:54 2017
@@ -35,14 +35,14 @@ def gen_orth(n):
     _,Q = eigh(A)
     return Q
 
-def cost_function_pair_euc(M, M_tilde, Q):
+def cost_function_pair_euc(M, Mtilde, Q):
     t1 = M
-    t2 = np.dot(Q, np.dot(M_tilde, Q.T))
+    t2 = np.dot(Q, np.dot(Mtilde, Q.T))
     return np.linalg.norm(t1 - t2)**2
 
-def cost_function_pair_rie(M, M_tilde, Q):
+def cost_function_pair_rie(M, Mtilde, Q):
     t1 = M
-    t2 = np.dot(Q, np.dot(M_tilde, Q.T))
+    t2 = np.dot(Q, np.dot(Mtilde, Q.T))
     return distance_riemann(t1, t2)**2
 
 def cost_function_full(Q, M, Mtilde, weights=None, dist=None):
@@ -66,28 +66,23 @@ def cost_function_full(Q, M, Mtilde, weights=None, dist=None):
     
     return np.dot(c, weights)
 
-def egrad_function_pair_rie(M, M_tilde, Q):
-    M_tilde_invsqrt = invsqrtm(M_tilde)
+def egrad_function_pair_rie(M, Mtilde, Q):
+    Mtilde_invsqrt = invsqrtm(Mtilde)
     M_sqrt = sqrtm(M)
     term_aux = np.dot(Q, np.dot(M, Q.T))
-    term_aux = np.dot(M_tilde_invsqrt, np.dot(term_aux, M_tilde_invsqrt))
-    return 4 * np.dot(np.dot(M_tilde_invsqrt, logm(term_aux)), np.dot(M_sqrt, Q))
+    term_aux = np.dot(Mtilde_invsqrt, np.dot(term_aux, Mtilde_invsqrt))
+    return 4 * np.dot(np.dot(Mtilde_invsqrt, logm(term_aux)), np.dot(M_sqrt, Q))
 
-def egrad_function_full(Q, M, Mtilde, weights=None, dist=None):
+def egrad_function_full_rie(Q, M, Mtilde, weights=None):
+
     if weights is None:
         weights = np.ones(len(M)) 
     else:
         weights = np.array(weights)
-        
-    if dist is None:
-        dist = 'euc'
-        
-    egrad_function_pair = {}
-    egrad_function_pair['rie'] = cost_function_pair_rie    
-        
+
     c = []
     for Mi, Mitilde in zip(M, Mtilde):
-        ci = egrad_function_pair[dist](Mi, Mitilde, Q)
+        ci = egrad_function_pair_rie(Mi, Mitilde, Q)
         c.append(ci)
     c = np.array(c)
     
@@ -109,7 +104,7 @@ def get_rotation_matrix(M, Mtilde, weights=None, dist=None):
         problem = Problem(manifold=manifold, cost=cost, verbosity=0)
     elif dist == 'rie':
         cost = partial(cost_function_full, M=M, Mtilde=Mtilde, weights=weights, dist=dist)    
-        egrad = partial(egrad_function_full, M=M, Mtilde=Mtilde, weights=weights, dist=dist) 
+        egrad = partial(egrad_function_full_rie, M=M, Mtilde=Mtilde, weights=weights) 
         problem = Problem(manifold=manifold, cost=cost, egrad=egrad, verbosity=0)
         
     # (3) Instantiate a Pymanopt solver
