@@ -80,13 +80,13 @@ def egrad_function_full_rie(Q, M, Mtilde, weights=None):
     else:
         weights = np.array(weights)
 
-    c = []
-    for Mi, Mitilde in zip(M, Mtilde):
-        ci = egrad_function_pair_rie(Mi, Mitilde, Q)
-        c.append(ci)
-    c = np.array(c)
+    g = []
+    for Mi, Mitilde, wi in zip(M, Mtilde, weights):
+        gi = egrad_function_pair_rie(Mi, Mitilde, Q)
+        g.append(gi * wi)
+    g = np.sum(g, axis=0)        
     
-    return np.dot(c, weights)
+    return g
 
 def get_rotation_matrix(M, Mtilde, weights=None, dist=None):
     

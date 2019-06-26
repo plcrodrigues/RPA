@@ -9,17 +9,28 @@ Created on Thu Aug 23 15:57:12 2018
 import numpy as np
 from sklearn.metrics import roc_auc_score
 
-from .helpers.transfer_learning.utils import transform_org2rct, transform_rct2str, transform_rct2rot, transform_org2talmon
-from .helpers.transfer_learning.utils import get_sourcetarget_split_motorimagery
+from .helpers.transfer_learning.utils import transform_org2rct, transform_rct2str, transform_rct2rot, transform_org2opt, transform_org2talmon
+from .helpers.transfer_learning.utils import transform_org2rct_p300, transform_org2talmon_p300, transform_rct2rot_p300
+from .helpers.transfer_learning.utils import score_ensemble_org, score_pooling_org
+from .helpers.transfer_learning.utils import score_ensemble_rct, score_pooling_rct
+from .helpers.transfer_learning.utils import score_ensemble_prl
+from .helpers.transfer_learning.utils import score_ensemble_rot, score_pooling_rot
+from .helpers.transfer_learning.utils import get_sourcetarget_split_motorimagery, get_sourcetarget_split_p300
 
-def RPA_recenter(source, target_train, target_test, paradigm='MI'):
-    return transform_org2rct(source, target_train, target_test)
+def RPA_recenter(source, target_train, target_test, paradigm='MI', weight_samples=False):
+    if paradigm == 'P300':
+        return transform_org2rct_p300(source, target_train, target_test, weight_samples)
+    else:
+        return transform_org2rct(source, target_train, target_test)
 
 def RPA_stretch(source, target_train, target_test, paradigm='MI'):
     return transform_rct2str(source, target_train, target_test)
 
-def RPA_rotate(source, target_train, target_test, paradigm='MI'):
-    return transform_rct2rot(source, target_train, target_test)
+def RPA_rotate(source, target_train, target_test, paradigm='MI', class_weights=None, distance='euc'):
+    if paradigm == 'P300':
+        return transform_rct2rot_p300(source, target_train, target_test, class_weights, distance)
+    else:
+        return transform_rct2rot(source, target_train, target_test, class_weights, distance)
 
 def RPA_correct_driftruns(data_org, runs_dict):
 
@@ -49,11 +60,20 @@ def RPA_correct_driftruns(data_org, runs_dict):
 
     return data_rct
 
+def OptimTransp(source, target_train, target_test, paradigm='MI'):
+    return transform_org2opt(source, target_train, target_test)
+
 def TalmonTransport(source, target_train, target_test, paradigm='MI'):
-    return transform_org2talmon(source, target_train, target_test)
+    if paradigm == 'P300':
+        return transform_org2talmon_p300(source, target_train, target_test)
+    else:
+        return transform_org2talmon(source, target_train, target_test)
 
 def get_sourcetarget_split(source, target, ncovs_train, paradigm='MI'):
-    return get_sourcetarget_split_motorimagery(source, target, ncovs_train)
+    if (paradigm == 'P300'):
+        return get_sourcetarget_split_p300(source, target, ncovs_train)
+    else:
+        return get_sourcetarget_split_motorimagery(source, target, ncovs_train)
 
 def get_score_notransfer(clf, target_train, target_test, paradigm='MI'):
 
@@ -90,3 +110,24 @@ def get_score_transferlearning(clf, source, target_train, target_test, paradigm=
     y_pred = np.array([y_pred == i for i in np.unique(y_pred)]).T
 
     return roc_auc_score(y_test, y_pred)
+
+def get_score_ensembling_org(settings, subject_target, ntop):
+    return score_ensemble_org(settings, subject_target, ntop)
+
+def get_score_ensembling_rct(settings, subject_target, ntop):
+    return score_ensemble_rct(settings, subject_target, ntop)
+
+def get_score_ensembling_prl(settings, subject_target, ntop):
+    return score_ensemble_prl(settings, subject_target, ntop)
+
+def get_score_ensembling_rot(settings, subject_target, ntop):
+    return score_ensemble_rot(settings, subject_target, ntop)
+
+def get_score_pooling_org(settings, subject_target, ntop):
+    return score_pooling_org(settings, subject_target, ntop)
+
+def get_score_pooling_rct(settings, subject_target, ntop):
+    return score_pooling_rct(settings, subject_target, ntop)
+
+def get_score_pooling_rot(settings, subject_target, ntop):
+    return score_pooling_rot(settings, subject_target, ntop)
