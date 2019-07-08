@@ -9,8 +9,8 @@ Created on Thu Aug 23 15:57:12 2018
 import numpy as np
 from sklearn.metrics import roc_auc_score
 
-from .helpers.transfer_learning.utils import transform_org2rct, transform_rct2str, transform_rct2rot, transform_org2opt, transform_org2talmon
-from .helpers.transfer_learning.utils import transform_org2rct_p300, transform_org2talmon_p300, transform_rct2rot_p300
+from .helpers.transfer_learning.utils import transform_org2rct, transform_rct2str, transform_rct2rot
+from .helpers.transfer_learning.utils import transform_org2rct_p300, transform_rct2rot_p300
 from .helpers.transfer_learning.utils import get_sourcetarget_split_motorimagery, get_sourcetarget_split_p300
 
 def RPA_recenter(source, target_train, target_test, paradigm='MI', weight_samples=False):
@@ -27,43 +27,6 @@ def RPA_rotate(source, target_train, target_test, paradigm='MI', class_weights=N
         return transform_rct2rot_p300(source, target_train, target_test, class_weights, distance)
     else:
         return transform_rct2rot(source, target_train, target_test, class_weights, distance)
-
-def RPA_correct_driftruns(data_org, runs_dict):
-
-    # runs_dict is a dictionary
-    # runs_dict[i] = idx_run_i
-
-    covs_org = data_org['covs']
-    labs_org = data_org['labels']
-
-    covs_run = {}; labs_run = {}
-    for runi in runs_dict.keys():
-        covs_run[runi] = covs_org[runs_dict[runi]]
-        labs_run[runi] = labs_org[runs_dict[runi]]
-
-    covs_run_rct = {}
-    for runi in runs_dict.keys():
-        target_org_train = {}
-        target_org_train['covs'] = covs_run[runi]
-        target_org_train['labels'] = labs_run[runi]
-        target_org_test = target_org_train
-        _, target_rct_train, _ = RPA_recenter(target_org_train, target_org_train, target_org_test)
-        covs_run_rct[runi] = target_rct_train['covs']
-
-    data_rct = {}
-    data_rct['covs'] = np.concatenate([covs_run_rct[runi] for runi in runs_dict.keys()], axis=0)
-    data_rct['labels'] = np.concatenate([labs_run[runi] for runi in runs_dict.keys()], axis=0)
-
-    return data_rct
-
-def OptimTransp(source, target_train, target_test, paradigm='MI'):
-    return transform_org2opt(source, target_train, target_test)
-
-def TalmonTransport(source, target_train, target_test, paradigm='MI'):
-    if paradigm == 'P300':
-        return transform_org2talmon_p300(source, target_train, target_test)
-    else:
-        return transform_org2talmon(source, target_train, target_test)
 
 def get_sourcetarget_split(source, target, ncovs_train, paradigm='MI'):
     if (paradigm == 'P300'):
