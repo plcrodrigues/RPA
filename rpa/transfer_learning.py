@@ -11,10 +11,6 @@ from sklearn.metrics import roc_auc_score
 
 from .helpers.transfer_learning.utils import transform_org2rct, transform_rct2str, transform_rct2rot, transform_org2opt, transform_org2talmon
 from .helpers.transfer_learning.utils import transform_org2rct_p300, transform_org2talmon_p300, transform_rct2rot_p300
-from .helpers.transfer_learning.utils import score_ensemble_org, score_pooling_org
-from .helpers.transfer_learning.utils import score_ensemble_rct, score_pooling_rct
-from .helpers.transfer_learning.utils import score_ensemble_prl
-from .helpers.transfer_learning.utils import score_ensemble_rot, score_pooling_rot
 from .helpers.transfer_learning.utils import get_sourcetarget_split_motorimagery, get_sourcetarget_split_p300
 
 def RPA_recenter(source, target_train, target_test, paradigm='MI', weight_samples=False):
@@ -111,23 +107,3 @@ def get_score_transferlearning(clf, source, target_train, target_test, paradigm=
 
     return roc_auc_score(y_test, y_pred)
 
-def get_score_ensembling_org(settings, subject_target, ntop):
-    return score_ensemble_org(settings, subject_target, ntop)
-
-def get_score_ensembling_rct(settings, subject_target, ntop):
-    return score_ensemble_rct(settings, subject_target, ntop)
-
-def get_score_ensembling_prl(settings, subject_target, ntop):
-    return score_ensemble_prl(settings, subject_target, ntop)
-
-def get_score_ensembling_rot(settings, subject_target, ntop):
-    return score_ensemble_rot(settings, subject_target, ntop)
-
-def get_score_pooling_org(settings, subject_target, ntop):
-    return score_pooling_org(settings, subject_target, ntop)
-
-def get_score_pooling_rct(settings, subject_target, ntop):
-    return score_pooling_rct(settings, subject_target, ntop)
-
-def get_score_pooling_rot(settings, subject_target, ntop):
-    return score_pooling_rot(settings, subject_target, ntop)
