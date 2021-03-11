@@ -9,9 +9,9 @@ Created on Thu Aug 23 15:57:12 2018
 import numpy as np
 from sklearn.metrics import roc_auc_score
 
-from .helpers.transfer_learning.utils import transform_org2rct, transform_rct2str, transform_rct2rot
-from .helpers.transfer_learning.utils import transform_org2rct_p300, transform_rct2rot_p300
-from .helpers.transfer_learning.utils import get_sourcetarget_split_motorimagery, get_sourcetarget_split_p300
+from rpa.helpers.transfer_learning.utils import transform_org2rct, transform_rct2str, transform_rct2rot
+from rpa.helpers.transfer_learning.utils import transform_org2rct_p300, transform_rct2rot_p300
+from rpa.helpers.transfer_learning.utils import get_sourcetarget_split_motorimagery, get_sourcetarget_split_p300
 
 def RPA_recenter(source, target_train, target_test, paradigm='MI', weight_samples=False):
     if paradigm == 'P300':

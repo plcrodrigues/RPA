@@ -19,7 +19,7 @@ from pyriemann.utils.base import invsqrtm, sqrtm, logm, expm, powm
 from pyriemann.utils.distance import distance_riemann
 from pyriemann.classification import MDM
 
-from sklearn.externals import joblib
+import joblib
 from . import manopt as manifoptim
 
 def get_target_split_motorimagery(target, ncovs_train):

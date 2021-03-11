@@ -1,4 +1,4 @@
-from sklearn.externals import joblib
+import joblib
 import os
 
 # load the source and target datasets

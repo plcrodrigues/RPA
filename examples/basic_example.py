@@ -2,22 +2,22 @@
 # installed via pip
 import numpy as np
 import matplotlib.pyplot as plt
-from sklearn.externals import joblib
+import joblib
 from pyriemann.classification import MDM
 from pyriemann.utils.distance import distance_riemann 
 from tqdm import tqdm
 from collections import OrderedDict
 
 # get the functions from RPA package
-import rpa.transfer_learning as TL
-import rpa.diffusion_map as DM
-import rpa.get_dataset as GD
+from rpa import transfer_learning as TL
+from rpa import diffusion_map as DM
+from rpa import get_dataset as GD
 
 # get the dataset
 datafolder = '../datasets/'
 paradigm = 'motorimagery'
-target = GD.get_dataset(datafolder, paradigm, subject=1) 
-source = GD.get_dataset(datafolder, paradigm, subject=2)
+target = GD.get_dataset(datafolder, paradigm, subject=3) 
+source = GD.get_dataset(datafolder, paradigm, subject=1)
 
 # instantiate the Riemannian classifier to use
 clf = MDM() 
