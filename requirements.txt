@@ -6,4 +6,4 @@ tqdm==4.56.0
 scipy==1.6.1
 matplotlib==3.2.2
 pyriemann==0.2.6
-scikit_learn==0.24.1
+scikit_learn==0.23.2
