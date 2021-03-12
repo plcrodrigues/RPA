@@ -29,12 +29,11 @@ This will ensure that whenever you do ```import rpa``` your code will find the s
 
 **Requirements we use**
 
-- pymanopt==0.2.5
-- joblib==0.16.0
 - autograd==1.3
-- numpy==1.20.1
-- tqdm==4.56.0
+- pyriemann==0.2.6
+- pymanopt==0.2.5
 - scipy==1.6.1
 - matplotlib==3.2.2
-- pyriemann==0.2.6
-- scikit_learn==0.23.2
+- joblib==1.0.1
+- tqdm==4.56.0
+- numpy==1.20.1
