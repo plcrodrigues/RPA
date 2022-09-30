@@ -3,6 +3,6 @@ pyriemann==0.2.6
 pymanopt==0.2.5
 scipy==1.6.1
 matplotlib==3.2.2
-joblib==1.0.1
+joblib==1.2.0
 tqdm==4.56.0
 numpy==1.20.1
