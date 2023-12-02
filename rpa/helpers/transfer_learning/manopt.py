@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 """
 Created on Mon Dec  4 15:25:54 2017
-
 @author: coelhorp
+
+Modified on Dec 2 2023
+@author: Carl
 """
 
 from scipy.linalg import eigh
@@ -116,13 +118,6 @@ def get_rotation_matrix(M, Mtilde, weights=None, dist=None):
     # (2) Define cost function and a problem
     cost, egrad = create_cost_and_derivates(manifold, M, Mtilde, weights, dist)
     problem = Problem(manifold=manifold, cost=cost, euclidean_gradient=egrad)
-    # if dist == 'euc':
-    #     cost = partial(cost_function_full, M=M, Mtilde=Mtilde, weights=weights, dist=dist)    
-    #     problem = Problem(manifold=manifold, cost=cost, verbosity=0)
-    # elif dist == 'rie':
-    #     cost = partial(cost_function_full, M=M, Mtilde=Mtilde, weights=weights, dist=dist)    
-    #     egrad = partial(egrad_function_full_rie, M=M, Mtilde=Mtilde, weights=weights) 
-    #     problem = Problem(manifold=manifold, cost=cost, egrad=egrad, verbosity=0)
         
     # (3) Instantiate a Pymanopt solver
     solver = SteepestDescent(min_gradient_norm=1e-3, verbosity=0)   
