@@ -8,9 +8,10 @@ Created on Mon Dec  4 15:25:54 2017
 
 from scipy.linalg import eigh
 import autograd.numpy as np
-from pymanopt.manifolds import Rotations
+import pymanopt
+from pymanopt.manifolds import SpecialOrthogonalGroup
 from pymanopt import Problem
-from pymanopt.solvers import SteepestDescent
+from pymanopt.optimizers import SteepestDescent
 from pyriemann.utils.distance import distance_riemann
 from pyriemann.utils.base import invsqrtm, sqrtm, logm
 
@@ -88,6 +89,20 @@ def egrad_function_full_rie(Q, M, Mtilde, weights=None):
     
     return g
 
+def create_cost_and_derivates(manifold, M, Mtilde, weights, dist='euc'):
+    egrad = None
+
+    @pymanopt.function.autograd(manifold)
+    def cost(Q):
+        return cost_function_full(Q, M=M, Mtilde=Mtilde, weights=weights, dist=dist)
+
+    if dist == 'rie':
+        @pymanopt.function.autograd(manifold)
+        def egrad(Q):
+            return egrad_function_full_rie(Q, M=M, Mtilde=Mtilde, weights=weights)
+    
+    return cost, egrad
+
 def get_rotation_matrix(M, Mtilde, weights=None, dist=None):
     
     if dist is None:
@@ -96,22 +111,24 @@ def get_rotation_matrix(M, Mtilde, weights=None, dist=None):
     n = M[0].shape[0]
         
     # (1) Instantiate a manifold
-    manifold = Rotations(n)
+    manifold = SpecialOrthogonalGroup(n)
     
     # (2) Define cost function and a problem
-    if dist == 'euc':
-        cost = partial(cost_function_full, M=M, Mtilde=Mtilde, weights=weights, dist=dist)    
-        problem = Problem(manifold=manifold, cost=cost, verbosity=0)
-    elif dist == 'rie':
-        cost = partial(cost_function_full, M=M, Mtilde=Mtilde, weights=weights, dist=dist)    
-        egrad = partial(egrad_function_full_rie, M=M, Mtilde=Mtilde, weights=weights) 
-        problem = Problem(manifold=manifold, cost=cost, egrad=egrad, verbosity=0)
+    cost, egrad = create_cost_and_derivates(manifold, M, Mtilde, weights, dist)
+    problem = Problem(manifold=manifold, cost=cost, euclidean_gradient=egrad)
+    # if dist == 'euc':
+    #     cost = partial(cost_function_full, M=M, Mtilde=Mtilde, weights=weights, dist=dist)    
+    #     problem = Problem(manifold=manifold, cost=cost, verbosity=0)
+    # elif dist == 'rie':
+    #     cost = partial(cost_function_full, M=M, Mtilde=Mtilde, weights=weights, dist=dist)    
+    #     egrad = partial(egrad_function_full_rie, M=M, Mtilde=Mtilde, weights=weights) 
+    #     problem = Problem(manifold=manifold, cost=cost, egrad=egrad, verbosity=0)
         
     # (3) Instantiate a Pymanopt solver
-    solver = SteepestDescent(mingradnorm=1e-3)   
+    solver = SteepestDescent(min_gradient_norm=1e-3, verbosity=0)   
     
     # let Pymanopt do the rest
-    Q_opt = solver.solve(problem)    
+    Q_opt = solver.run(problem).point
     
     return Q_opt
     
