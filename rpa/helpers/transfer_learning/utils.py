@@ -158,7 +158,7 @@ def transform_org2rct_p300(source, target_train, target_test, weight_samples=Fal
 
     return source_rct, target_rct_train, target_rct_test
 
-def transform_rct2str(source, target_train, target_test, pcoeff=False):
+def transform_rct2str(source, target_train, target_test, pcoeff=False, transform_target=True):
     '''
 
     '''
@@ -174,24 +174,31 @@ def transform_rct2str(source, target_train, target_test, pcoeff=False):
     n = covs_source.shape[1]
     disp_source = np.sum([distance_riemann(covi, np.eye(n)) ** 2 for covi in covs_source]) / len(covs_source)
     disp_target = np.sum([distance_riemann(covi, np.eye(n)) ** 2 for covi in covs_target_train]) / len(covs_target_train)
-    p = np.sqrt(disp_target / disp_source)
 
     target_pow_train  = {}
-    target_pow_train['covs'] = np.stack([powm(covi, 1.0/p) for covi in covs_target_train])
-    target_pow_train['labels'] = target_train['labels']
-
     target_pow_test  = {}
-    target_pow_test['covs'] = np.stack([powm(covi, 1.0/p) for covi in covs_target_test])
+    target_pow_train['labels'] = target_train['labels']
     target_pow_test['labels'] = target_test['labels']
+
+    if transform_target:
+        p = np.sqrt(disp_target / disp_source)
+        target_pow_train['covs'] = np.stack([powm(covi, 1.0/p) for covi in covs_target_train])
+        target_pow_test['covs'] = np.stack([powm(covi, 1.0/p) for covi in covs_target_test])
+    else:
+        p = np.sqrt(disp_source / disp_target)
+        source_pow['covs'] = np.stack([powm(covi, 1.0/p) for covi in source_pow['covs']])
+        target_pow_train['covs'] = covs_target_train
+        target_pow_test['covs'] = covs_target_test
 
     if pcoeff:
         return source_pow , target_pow_train, target_pow_test, p
     else:
         return source_pow , target_pow_train, target_pow_test
 
-def transform_rct2rot(source, target_train, target_test, weights=None, distance='euc'):
+def transform_rct2rot(source, target_train, target_test, weights=None, distance='euc', transform_target=False):
     '''
-        rotate the re-centered matrices from the target so they match with those from source
+        if transform_target: rotate the re-centered matrices from the target so they match with those from source
+        else: rotate that from the source so they match with those from target_train
         note that we use information from class labels of some of the target covariances (not all but some)
         rct (re-centered matrices) -> rot (rotated re-centered matrices)
     '''
@@ -216,51 +223,23 @@ def transform_rct2rot(source, target_train, target_test, weights=None, distance=
         M_target_train_j = mean_riemann(target_train['covs'][target_train['labels'] == j])
         M_target_train.append(M_target_train_j)
 
-    R = manifoptim.get_rotation_matrix(M=M_source, Mtilde=M_target_train, weights=weights, dist=distance)
-
-    covs_target_train = np.stack([np.dot(R, np.dot(covi, R.T)) for covi in target_train['covs']])
-    target_rot_train['covs'] = covs_target_train
-
-    covs_target_test = np.stack([np.dot(R, np.dot(covi, R.T)) for covi in target_test['covs']])
-    target_rot_test['covs'] = covs_target_test
-
-    return source_rot, target_rot_train, target_rot_test
-
-def transform_str2rot(source, target_train, target_test):
-    return transform_rct2rot(source, target_train, target_test)
-
-def transform_rct2rot_p300(source, target_train, target_test, class_weights, distance='euc'):
-
-    source_rot = {}
-    source_rot['covs'] = source['covs']
-    source_rot['labels'] = source['labels']
-
-    target_rot_train = {}
-    target_rot_train['labels'] = target_train['labels']
-
-    target_rot_test = {}
-    target_rot_test['labels'] = target_test['labels']
-
-    M_source = []
-    for i in np.unique(source['labels']):
-        M_source_i = mean_riemann(source['covs'][source['labels'] == i])
-        M_source.append(M_source_i)
-
-    M_target_train = []
-    for j in np.unique(target_train['labels']):
-        M_target_train_j = mean_riemann(target_train['covs'][target_train['labels'] == j])
-        M_target_train.append(M_target_train_j)
-
-    #R = manifoptim.get_rotation_matrix(M=M_source, Mtilde=M_target_train, dist='euc', weights=[1, 5])
-    R = manifoptim.get_rotation_matrix(M=M_source, Mtilde=M_target_train, dist=distance, weights=class_weights)    
-
-    covs_target_train = np.stack([np.dot(R, np.dot(covi, R.T)) for covi in target_train['covs']])
-    target_rot_train['covs'] = covs_target_train
-
-    covs_target_test = np.stack([np.dot(R, np.dot(covi, R.T)) for covi in target_test['covs']])
-    target_rot_test['covs'] = covs_target_test
+    if transform_target:
+        R = manifoptim.get_rotation_matrix(M=M_source, Mtilde=M_target_train, weights=weights, dist=distance)
+        target_rot_train['covs'] = np.stack([np.dot(R, np.dot(covi, R.T)) for covi in target_train['covs']])
+        target_rot_test['covs'] = np.stack([np.dot(R, np.dot(covi, R.T)) for covi in target_test['covs']])
+    else:
+        R = manifoptim.get_rotation_matrix(M=M_target_train, Mtilde=M_source, weights=weights, dist=distance)
+        source_rot['covs'] = np.stack([np.dot(R, np.dot(covi, R.T)) for covi in source_rot['covs']])
+        target_rot_train['covs'] = target_train['covs']
+        target_rot_test['covs'] = target_test['covs']
 
     return source_rot, target_rot_train, target_rot_test
+
+def transform_str2rot(source, target_train, target_test, **kwargs):
+    return transform_rct2rot(source, target_train, target_test, **kwargs)
+
+def transform_rct2rot_p300(source, target_train, target_test, class_weights, distance='euc', transform_target=False):
+    return transform_rct2rot(source, target_train, target_test, weights=class_weights, distance=distance, transform_target=transform_target)
 
 class ParallelTransport(BaseEstimator, TransformerMixin):
     '''Parallel Transport in the SPD Manifold with AIRM distance

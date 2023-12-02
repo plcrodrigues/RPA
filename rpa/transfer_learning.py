@@ -19,14 +19,14 @@ def RPA_recenter(source, target_train, target_test, paradigm='MI', weight_sample
     else:
         return transform_org2rct(source, target_train, target_test)
 
-def RPA_stretch(source, target_train, target_test, paradigm='MI'):
-    return transform_rct2str(source, target_train, target_test)
+def RPA_stretch(source, target_train, target_test, paradigm='MI', transform_target=True):
+    return transform_rct2str(source, target_train, target_test, transform_target=transform_target)
 
-def RPA_rotate(source, target_train, target_test, paradigm='MI', class_weights=None, distance='euc'):
+def RPA_rotate(source, target_train, target_test, paradigm='MI', class_weights=None, distance='euc', transform_target=True):
     if paradigm == 'P300':
-        return transform_rct2rot_p300(source, target_train, target_test, class_weights, distance)
+        return transform_rct2rot_p300(source, target_train, target_test, class_weights, distance, transform_target=transform_target)
     else:
-        return transform_rct2rot(source, target_train, target_test, class_weights, distance)
+        return transform_rct2rot(source, target_train, target_test, class_weights, distance, transform_target=transform_target)
 
 def get_sourcetarget_split(source, target, ncovs_train, paradigm='MI'):
     if (paradigm == 'P300'):
