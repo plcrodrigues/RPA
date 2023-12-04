@@ -105,7 +105,7 @@ def parallel_transport_covariances(C, R):
         Cprt.append(parallel_transport_covariance_matrix(Ci, Ri))
     return np.stack(Cprt)
 
-def recenter(covs, M=None, sample_weights=None, return_M=True):
+def recenter(covs, M=None, sample_weights=None, return_M=False):
     '''Parallel transport covariance matrices to reference to the Identity matrix
 
     params:
