@@ -181,6 +181,18 @@ def stretch(covs, p):
     return np.stack([powm(covi, 1.0/p) for covi in covs])
 
 
+def unit_stretch(covs, return_p=False):
+    n_covs, n_ch, _ = covs.shape
+    I = np.repeat(np.eye(n_ch)[np.newaxis,...], n_covs, axis=0)
+    disp = np.sum(distance_riemann(covs, I) ** 2) / n_covs
+    p = np.sqrt(disp/1.)
+
+    if return_p:
+        return powm(covs, 1./p), p
+    else:
+        return powm(covs, 1./p)
+
+
 def transform_rct2str(source, target_train, target_test, pcoeff=False, transform_target=True):
     '''
 
