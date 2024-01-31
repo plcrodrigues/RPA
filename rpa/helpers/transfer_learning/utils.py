@@ -238,7 +238,7 @@ def rotate(covs, R):
     return np.stack([np.dot(R, np.dot(covi, R.T)) for covi in covs])
 
 
-def transform_rct2rot(source, target_train, target_test, weights=None, distance='euc', transform_target=False):
+def transform_rct2rot(source, target_train, target_test, weights=None, distance='euc', transform_target=True):
     '''
         if transform_target: rotate the re-centered matrices from the target so they match with those from source
         else: rotate that from the source so they match with those from target_train
@@ -275,7 +275,7 @@ def transform_str2rot(source, target_train, target_test, **kwargs):
     return transform_rct2rot(source, target_train, target_test, **kwargs)
 
 
-def transform_rct2rot_p300(source, target_train, target_test, class_weights, distance='euc', transform_target=False):
+def transform_rct2rot_p300(source, target_train, target_test, class_weights, distance='euc', transform_target=True):
     return transform_rct2rot(source, target_train, target_test, weights=class_weights, 
                              distance=distance, transform_target=transform_target)
 
